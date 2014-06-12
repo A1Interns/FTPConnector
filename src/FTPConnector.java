@@ -19,12 +19,17 @@ public class FTPConnector extends ClientModel {
 
     public FTPConnector(String host, int port, String user, String pwd){
         ftp = new FTPClient();
+        hostname = host;
+        port = port;
+        username = user;
+        password = pwd;
+        isConnected = initilizeConnection();
         workingDirectory = "";
     }
 
 
     @Override
-    public void initilizeConnection() {
+    public boolean initilizeConnection() {
         ftp.addProtocolCommandListener(new PrintCommandListener(new PrintWriter(System.out)));
         int reply;
         try {
@@ -33,12 +38,13 @@ public class FTPConnector extends ClientModel {
             if (!FTPReply.isPositiveCompletion(reply)) {
                 ftp.disconnect();
             }
-            ftp.login(user, pwd);
+            ftp.login(username, password);
             ftp.setFileType(FTP.BINARY_FILE_TYPE); //TODO different file types?
             ftp.enterLocalPassiveMode();
+            return true;
         }
         catch(Exception e){
-            System.out.println("unable to connect");
+            return false;
         }
     }
 

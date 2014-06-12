@@ -3,6 +3,7 @@
  */
 public abstract class ClientModel {
 
+    protected boolean isConnected = false;
     protected String hostname, username, password, workingDirectory;
     protected int port;
 
@@ -12,7 +13,7 @@ public abstract class ClientModel {
 
     abstract public void download();
 
-    abstract public void initilizeConnection();
+    abstract public boolean initilizeConnection();
 
     public void setHost(String newHost){hostname = newHost;}
 
