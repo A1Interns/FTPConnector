@@ -28,8 +28,7 @@ public abstract class ClientModel {
 
     public void setPassWord(String newPassWord){password = newPassWord;}
 
-    public void setWorkingDirectory(String newDirectory){workingDirectory = newDirectory;}
-
+    public abstract void changeWorkingDirectory(String newDirectory);
     public String getWorkingDirectory(){return workingDirectory;}
 
 }

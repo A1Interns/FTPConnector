@@ -11,16 +11,26 @@
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../javaLibs/commons-net-3.3.jar!/" />
-          <root url="jar://$MODULE_DIR$/../javaLibs/commons-net-examples-3.3.jar!/" />
-          <root url="jar://$MODULE_DIR$/../javaLibs/jsch-0.1.46.jar!/" />
-          <root url="jar://$MODULE_DIR$/../javaLibs/rabbitmq-client-tests.jar!/" />
-          <root url="jar://$MODULE_DIR$/../javaLibs/rabbitmq-client.jar!/" />
+          <root url="jar://$USER_HOME$/Downloads/jsch-0.1.51.jar!/" />
         </CLASSES>
         <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$USER_HOME$/Downloads/commons-net-3.3" />
+        </CLASSES>
+        <JAVADOC>
+          <root url="file://$USER_HOME$/Downloads/commons-net-3.3/apidocs" />
+        </JAVADOC>
         <SOURCES>
-          <root url="jar://$MODULE_DIR$/../javaLibs/commons-net-3.3-sources.jar!/" />
+          <root url="file://$USER_HOME$/Downloads/commons-net-3.3" />
+          <root url="file://$USER_HOME$/Downloads/commons-net-3.3" />
         </SOURCES>
+        <jarDirectory url="file://$USER_HOME$/Downloads/commons-net-3.3" recursive="false" />
+        <jarDirectory url="file://$USER_HOME$/Downloads/commons-net-3.3" recursive="false" type="SOURCES" />
       </library>
     </orderEntry>
   </component>
