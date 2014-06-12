@@ -15,15 +15,20 @@ import java.io.PrintWriter;
  */
 public class FTPConnector extends ClientModel {
 
-    private String hostname, username, password, workingDirectory;
     private FTPClient ftp;
 
     public FTPConnector(String host, int port, String user, String pwd){
         ftp = new FTPClient();
+        workingDirectory = "";
+    }
+
+
+    @Override
+    public void initilizeConnection() {
         ftp.addProtocolCommandListener(new PrintCommandListener(new PrintWriter(System.out)));
         int reply;
         try {
-            ftp.connect(host, port);
+            ftp.connect(hostname, port);
             reply = ftp.getReplyCode();
             if (!FTPReply.isPositiveCompletion(reply)) {
                 ftp.disconnect();
@@ -35,7 +40,6 @@ public class FTPConnector extends ClientModel {
         catch(Exception e){
             System.out.println("unable to connect");
         }
-        workingDirectory = "";
     }
 
     @Override
@@ -57,10 +61,5 @@ public class FTPConnector extends ClientModel {
     @Override
     public void download() {
 
-    }
-
-    @Override
-    public void initilizeConnection() {
-        
     }
 }

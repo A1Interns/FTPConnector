@@ -3,8 +3,8 @@
  */
 public abstract class ClientModel {
 
-    private String hostname, username, password, workingDirectory;
-    private int port;
+    protected String hostname, username, password, workingDirectory;
+    protected int port;
 
     abstract public void disconnect();
 
