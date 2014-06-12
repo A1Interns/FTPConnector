@@ -10,7 +10,7 @@ public abstract class ClientModel {
 
     abstract public void upload(String localFileFullName, String desiredDestinationFileName);
 
-    abstract public void download();
+    abstract public void download(String fileName);
 
     abstract public void initilizeConnection();
 

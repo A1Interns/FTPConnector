@@ -8,6 +8,8 @@ import com.jcraft.jsch.SftpATTRS;
 import com.jcraft.jsch.SftpException;
 import com.jcraft.jsch.SftpProgressMonitor;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 
@@ -63,18 +65,36 @@ public class SFTPConnector extends ClientModel {
     }
 
     @Override
-    public void upload(String localFileFullName, String desiredDestinationFileName) {
-        
+    public void upload(String localFileFullName, String desiredDestinationFileName)  {
+        try {
+            channelSftp.put(new FileInputStream(localFileFullName), desiredDestinationFileName);
+        } catch (FileNotFoundException e){
+            e.printStackTrace();
+        } catch (SftpException e){
+            e.printStackTrace();
+        }
 
     }
 
     @Override
-    public void download() {
+    public void download(String fileName) {
+        try {
+            channelSftp.get(fileName);
+        } catch (SftpException e) {
+            e.printStackTrace();
+        }
+    }
 
+    public void resumeDownload(String fileName, long skip){
+        try {
+            channelSftp.get(fileName, null, skip);
+        } catch (SftpException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void initilizeConnection() {
-
+        
     }
 }

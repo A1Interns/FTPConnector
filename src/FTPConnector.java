@@ -59,7 +59,7 @@ public class FTPConnector extends ClientModel {
     }
 
     @Override
-    public void download() {
+    public void download(String fileName) {
 
     }
 }
