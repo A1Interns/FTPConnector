@@ -2,8 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1d99777f-ea7a-490c-a37f-dd4cb94c483a" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/ClientModel.java" afterPath="$PROJECT_DIR$/src/ClientModel.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/FTPConnector.java" afterPath="$PROJECT_DIR$/src/FTPConnector.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/SFTPConnector.java" afterPath="$PROJECT_DIR$/src/SFTPConnector.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
@@ -53,8 +51,8 @@
       <file leaf-file-name="SFTPConnector.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/SFTPConnector.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.48051947" vertical-offset="897" max-vertical-offset="1590">
-              <caret line="82" column="35" selection-start-line="82" selection-start-column="35" selection-end-line="82" selection-end-column="35" />
+            <state vertical-scroll-proportion="0.32900432" vertical-offset="897" max-vertical-offset="1590">
+              <caret line="75" column="0" selection-start-line="75" selection-start-column="0" selection-end-line="75" selection-end-column="0" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -485,8 +483,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/SFTPConnector.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.48051947" vertical-offset="897" max-vertical-offset="1590">
-          <caret line="82" column="35" selection-start-line="82" selection-start-column="35" selection-end-line="82" selection-end-column="35" />
+        <state vertical-scroll-proportion="0.32900432" vertical-offset="897" max-vertical-offset="1590">
+          <caret line="75" column="0" selection-start-line="75" selection-start-column="0" selection-end-line="75" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
