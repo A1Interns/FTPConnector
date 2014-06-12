@@ -5,6 +5,7 @@
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/ClientModel.java" afterPath="$PROJECT_DIR$/src/ClientModel.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/FTPConnector.java" afterPath="$PROJECT_DIR$/src/FTPConnector.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/SFTPConnector.java" afterPath="$PROJECT_DIR$/src/SFTPConnector.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="FTPConnector.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -52,8 +53,8 @@
       <file leaf-file-name="SFTPConnector.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/SFTPConnector.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.8051948" vertical-offset="897" max-vertical-offset="1590">
-              <caret line="97" column="8" selection-start-line="97" selection-start-column="8" selection-end-line="97" selection-end-column="8" />
+            <state vertical-scroll-proportion="0.48051947" vertical-offset="897" max-vertical-offset="1590">
+              <caret line="82" column="35" selection-start-line="82" selection-start-column="35" selection-end-line="82" selection-end-column="35" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -484,8 +485,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/SFTPConnector.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.8051948" vertical-offset="897" max-vertical-offset="1590">
-          <caret line="97" column="8" selection-start-line="97" selection-start-column="8" selection-end-line="97" selection-end-column="8" />
+        <state vertical-scroll-proportion="0.48051947" vertical-offset="897" max-vertical-offset="1590">
+          <caret line="82" column="35" selection-start-line="82" selection-start-column="35" selection-end-line="82" selection-end-column="35" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>

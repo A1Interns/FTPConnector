@@ -95,6 +95,6 @@ public class SFTPConnector extends ClientModel {
 
     @Override
     public void initilizeConnection() {
-        
+
     }
 }
