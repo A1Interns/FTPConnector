@@ -13,7 +13,7 @@ import java.io.PrintWriter;
 /**
  * Created by bowenbaker on 6/12/14.
  */
-public class FTPConnector implements ClientModel {
+public class FTPConnector extends ClientModel {
 
     private String hostname, username, password, workingDirectory;
     private FTPClient ftp;
@@ -39,11 +39,6 @@ public class FTPConnector implements ClientModel {
     }
 
     @Override
-    public void changeWorkingDirectory(String newDirectory) {
-        workingDirectory = newDirectory;
-    }
-
-    @Override
     public void disconnect() {
 
     }
@@ -62,5 +57,10 @@ public class FTPConnector implements ClientModel {
     @Override
     public void download() {
 
+    }
+
+    @Override
+    public void initilizeConnection() {
+        
     }
 }

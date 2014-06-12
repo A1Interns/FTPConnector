@@ -1,14 +1,35 @@
 /**
  * Created by bowenbaker on 6/12/14.
  */
-public interface ClientModel {
+public abstract class ClientModel {
 
-    public void changeWorkingDirectory(String newDirectory);
+    private String hostname, username, password, workingDirectory;
+    private int port;
 
-    public void disconnect();
+    abstract public void disconnect();
 
-    public void upload(String localFileFullName, String desiredDestinationFileName);
+    abstract public void upload(String localFileFullName, String desiredDestinationFileName);
 
-    public void download();
+    abstract public void download();
+
+    abstract public void initilizeConnection();
+
+    public void setHost(String newHost){hostname = newHost;}
+
+    public String getHost() {return hostname;}
+
+    public void setPort(int newPort){port = newPort;}
+
+    public int getPort(){return port;}
+
+    public void setUserName(String newName){username = newName;}
+
+    public String getUserName(){return username;}
+
+    public void setPassWord(String newPassWord){password = newPassWord;}
+
+    public void setWorkingDirectory(String newDirectory){workingDirectory = newDirectory;}
+
+    public String getWorkingDirectory(){return workingDirectory;}
 
 }
