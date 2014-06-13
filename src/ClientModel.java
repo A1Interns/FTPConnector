@@ -28,7 +28,7 @@ public abstract class ClientModel {
 
     abstract public void upload(String localFileFullName, String desiredDestinationFileName) throws IOException;
 
-    abstract public void download(String fileName) throws IOException;
+    abstract public void download(String fileName, String localFilePath) throws IOException;
 
     abstract public void initializeConnection() throws IOException;
 
