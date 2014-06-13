@@ -23,7 +23,7 @@ public class SFTPConnector extends ClientModel {
     private Log logger = LogFactory.getLog(getClass());
 
     public SFTPConnector(String hostname, String user, String pwd){
-        this(hostname, 22, user, pwd);
+        this(hostname, 2222, user, pwd);
     }
 
     public SFTPConnector(String hostname, int port, String user, String pwd){
@@ -31,12 +31,9 @@ public class SFTPConnector extends ClientModel {
         this.port = port;
         this.username = user;
         this.password = pwd;
-    }
-
-    public SFTPConnector(String host){
-        this.hostname = host;
         jsch = new JSch();
     }
+
 
     @Override
     public void changeWorkingDirectory(String newDirectory) throws IOException{
@@ -76,7 +73,7 @@ public class SFTPConnector extends ClientModel {
     }
 
     public String[] ls() throws IOException{
-        return ls(getAbsolutePath(workingDirectory), true, true);
+        return ls(".", true, true);
     }
 
     @Override
@@ -178,21 +175,58 @@ public class SFTPConnector extends ClientModel {
         try {
             Properties hash = new Properties();
             hash.put(STRICT_HOST_KEY_CHECKING, "no");
+
             session = jsch.getSession(username, hostname);
             session.setConfig(hash);
             session.setPort(port);
             session.setPassword(password);
             session.connect();
+
             Channel channel = session.openChannel(CHANNEL_SFTP);
             channel.connect();
             channelSftp = (ChannelSftp) channel;
             this.home = channelSftp.pwd();
+            this.workingDirectory = home;
         } catch (JSchException e){
             logger.error("JSchException: " + e.getMessage());
             throw new IOException(e.getMessage());
         } catch (SftpException e){
             logger.error("SftpException: " + e.getMessage());
             throw new IOException(e.getMessage());
+        }
+    }
+
+    private static void printStringArray(String[] array){
+        for (String str : array) System.out.println(str);
+    }
+
+    private boolean fileExists(String fileName){
+        try {
+            String[] fileNames = ls();
+            for (String file : fileNames){
+                if (file.equals(fileName)){
+                    return true;
+                }
+            }
+            return false;
+
+        } catch (IOException e){
+
+        }
+        return false;
+    }
+
+    public static void main(String[] args){
+        SFTPConnector sftpConnector = new SFTPConnector("sftp.agilone.com", "jason.zhang", "Agil1234");
+        try {
+            sftpConnector.initializeConnection();
+            System.out.println("Connected");
+            sftpConnector.changeWorkingDirectory("dir1");
+            sftpConnector.upload("src/ClientModel.java", "ClientModel.java");
+            sftpConnector.changeWorkingDirectory("..");
+            printStringArray(sftpConnector.ls());
+        } catch (IOException e){
+            System.out.println("failed");
         }
     }
 }
