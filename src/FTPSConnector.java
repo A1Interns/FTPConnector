@@ -15,9 +15,12 @@ import java.io.PrintWriter;
 
 import org.apache.commons.net.ftp.FTPSClient;
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 
 public class FTPSConnector extends ClientModel {
+
+    Logger logger = Logger.getLogger()
 
     private FTPSClient ftps;
 
@@ -136,13 +139,16 @@ public class FTPSConnector extends ClientModel {
 
     @Override
     public void upload(String localFileFullName, String desiredDestinationFileName) {
+        boolean retVal = false;
         try{
             InputStream input = new FileInputStream(new File(localFileFullName));
-            this.ftps.storeFile(workingDirectory + desiredDestinationFileName, input);
+            retVal = this.ftps.storeFile(workingDirectory + desiredDestinationFileName, input);
         }
         catch(Exception e){
             e.printStackTrace();
         }
+
+        return retVal;
     }
 
     @Override

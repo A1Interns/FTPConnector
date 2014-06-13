@@ -1,36 +1,40 @@
 import java.io.IOError;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Vector;
+import java.util.logging.Logger;
 
 /**
  * Created by bowenbaker on 6/12/14.
  */
 public abstract class ClientModel {
 
+    private final static Logger LOGGER = Logger.getLogger(ClientModel.class.getName());
     protected boolean isConnected = false;
     protected String hostname, username, password, workingDirectory, home;
     protected int port;
 
-    abstract public void rename(String oldFileName, String newFileName) throws IOException;
+    abstract public boolean rename(String oldFileName, String newFileName);
 
-    abstract public String[] ls() throws IOException;
+    abstract public Vector<String> ls();
 
-    abstract public String[] ls(String path) throws IOException;
+    abstract public Vector<String> ls(String path);
 
-    abstract public String[] ls(String path, boolean includeFiles, boolean includeDirectories) throws IOException;
+    abstract public Vector<String> ls(String path, boolean includeFiles, boolean includeDirectories);
 
-    abstract public void mkdir(String directoryName) throws IOException;
+    abstract public boolean mkdir(String directoryName);
 
-    abstract public void rmdir(String directoryName) throws IOException;
+    abstract public boolean rmdir(String directoryName);
 
-    abstract public void rm(String fileName) throws IOException;
+    abstract public boolean rm(String fileName);
 
-    abstract public void disconnect();
+    abstract public boolean disconnect();
 
-    abstract public void upload(String localFileFullName, String desiredDestinationFileName) throws IOException;
+    abstract public boolean upload(String localFileFullName, String desiredDestinationFileName);
 
-    abstract public void download(String fileName, String localFilePath) throws IOException;
+    abstract public boolean download(String fileName, String localFilePath);
 
-    abstract public void initializeConnection() throws IOException;
+    abstract public boolean initializeConnection();
 
     public void setHost(String newHost) {
         hostname = newHost;
@@ -68,10 +72,26 @@ public abstract class ClientModel {
         password = newPassWord;
     }
 
-    public abstract void changeWorkingDirectory(String newDirectory) throws IOException;
+    public abstract boolean cd(String newDirectory);
 
     public String getWorkingDirectory() {
         return workingDirectory;
+    }
+
+    public boolean[] uploadFiles(String[] files){
+        boolean[] outcomes = new boolean[files.length];
+        for (int i = 0; i < files.length; i++){
+            outcomes[i] = upload(files[i], files[i]);
+        }
+        return outcomes;
+    }
+
+    public boolean[] downloadFiles(String[] files){
+        boolean[] outcomes = new boolean[files.length];
+        for (int i = 0; i < files.length; i++){
+            outcomes[i] = download(files[i], files[i]);
+        }
+        return outcomes;
     }
 
 }
