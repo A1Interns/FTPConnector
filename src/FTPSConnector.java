@@ -21,7 +21,7 @@ import java.util.Vector;
 
 public class FTPSConnector extends ClientModel {
 
-    Logger logger = Logger.getLogger()
+   // Logger logger = Logger.getLogger();
 
     private FTPSClient ftps;
     private String prot = "P";
@@ -224,5 +224,11 @@ public class FTPSConnector extends ClientModel {
             //TODO Logger
             return false;
         }
+    }
+
+    @Override
+    public boolean cd(String newDirectory){
+        workingDirectory = newDirectory;
+        return true;
     }
 }
