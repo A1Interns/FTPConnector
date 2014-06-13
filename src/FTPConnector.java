@@ -49,6 +49,11 @@ public class FTPConnector extends ClientModel {
     }
 
     @Override
+    public void changeWorkingDirectory(String newDirectory) {
+        workingDirectory = newDirectory;
+    }
+
+    @Override
     public void disconnect() {
 
     }
