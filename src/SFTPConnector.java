@@ -1,7 +1,5 @@
 import com.jcraft.jsch.*;
 import com.jcraft.jsch.ChannelSftp.LsEntry;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -21,11 +19,11 @@ public class SFTPConnector extends ClientModel {
     private ChannelSftp channelSftp;
     private Session session;
 
-    public SFTPConnector(String hostname, String user, String pwd){
+    public SFTPConnector(String hostname, String user, String pwd) {
         this(hostname, 2222, user, pwd);
     }
 
-    public SFTPConnector(String hostname, int port, String user, String pwd){
+    public SFTPConnector(String hostname, int port, String user, String pwd) {
         this.hostname = hostname;
         this.port = port;
         this.username = user;
@@ -33,24 +31,22 @@ public class SFTPConnector extends ClientModel {
         jsch = new JSch();
     }
 
-
     @Override
-    public void changeWorkingDirectory(String newDirectory) throws IOException{
+    public boolean cd(String newDirectory) {
         workingDirectory = newDirectory;
         try {
             newDirectory = getAbsolutePath(newDirectory);
             channelSftp.cd(newDirectory);
-        } catch (SftpException e){
-            logger.error("Error duing changing working directory from " + getAbsolutePath(workingDirectory) + " to " + newDirectory);
-            throw new IOException(e.getMessage());
+            return true;
+        } catch (SftpException e) {
+            logger.severe("Error duing changing working directory from " + getAbsolutePath(workingDirectory) + " to " + newDirectory);
+            return false;
         }
 
     }
 
-    public String getAbsolutePath(String path)
-    {
-        if (path.startsWith("/~"))
-        {
+    public String getAbsolutePath(String path) {
+        if (path.startsWith("/~")) {
             return home + path.substring(2, path.length());
         }
         // Already absolute!
@@ -58,119 +54,125 @@ public class SFTPConnector extends ClientModel {
     }
 
     @Override
-    public void rename(String oldFileName, String newFileName) throws IOException{
+    public boolean rename(String oldFileName, String newFileName) {
         try {
             channelSftp.rename(oldFileName, newFileName);
         } catch (SftpException e) {
-            logger.error("Error during renaming file " + oldFileName + " to " + newFileName);
-            throw new IOException(e.getMessage());
+            logger.severe("Error during renaming file " + oldFileName + " to " + newFileName);
+            return false;
         }
+        return true;
     }
 
-    public String[] ls(String path) throws IOException{
+    @Override
+    public Vector<String> ls(String path) {
         return ls(path, true, true);
     }
 
-    public String[] ls() throws IOException{
+    @Override
+    public Vector<String> ls() {
         return ls(".", true, true);
     }
 
     @Override
-    public String[] ls(String path, boolean includeFiles, boolean includeDirectories) throws IOException {
+    public Vector<String> ls(String path, boolean includeFiles, boolean includeDirectories) {
         Vector<String> entriesNames = new Vector<String>();
         try {
             Vector<LsEntry> lsEntries = channelSftp.ls(path);
-            for (LsEntry entry : lsEntries){
-                if (!entry.getAttrs().isDir() && includeFiles){
+            for (LsEntry entry : lsEntries) {
+                if (!entry.getAttrs().isDir() && includeFiles) {
                     entriesNames.add(entry.getFilename());
-                }
-                else if (entry.getAttrs().isDir() && includeDirectories){
+                } else if (entry.getAttrs().isDir() && includeDirectories) {
                     entriesNames.add(entry.getFilename());
                 }
             }
-        } catch (SftpException e){
-            logger.error("Error during listing directories in " + path);
-            throw new IOException(e.getMessage());
+        } catch (SftpException e) {
+            logger.severe("Error during listing directories in " + path);
         }
-        return entriesNames.toArray(new String[entriesNames.size()]);
+        return entriesNames;
     }
 
     @Override
-    public void mkdir(String directoryName) throws IOException{
+    public boolean mkdir(String directoryName) {
         try {
             channelSftp.mkdir(getAbsolutePath(directoryName));
-        } catch (SftpException e){
-            logger.error("Error during creating directory" + directoryName);
-            throw new IOException(e.getMessage());
+        } catch (SftpException e) {
+            logger.severe("Error during creating directory" + directoryName);
+            return true;
         }
+        return false;
     }
 
     @Override
-    public void rmdir(String directoryName) throws IOException{
+    public boolean rmdir(String directoryName) {
         try {
             channelSftp.rmdir(directoryName);
-        } catch (SftpException e){
-            logger.error("Error during removing directory" + directoryName);
-            throw new IOException(e.getMessage());
+        } catch (SftpException e) {
+            logger.severe("Error during removing directory" + directoryName);
+            return false;
         }
+        return true;
     }
 
     @Override
-    public void rm(String fileName) throws IOException{
+    public boolean rm(String fileName) {
         try {
             channelSftp.rm(fileName);
-        } catch (SftpException e){
-            logger.error("Error during removing file " + fileName);
-            throw new IOException(e.getMessage());
+        } catch (SftpException e) {
+            logger.severe("Error during removing file " + fileName);
+            return false;
         }
+        return true;
     }
 
     @Override
-    public void disconnect() {
+    public boolean disconnect() {
         if (channelSftp != null) {
             channelSftp.disconnect();
         }
-        if (session != null){
+        if (session != null) {
             session.disconnect();
         }
+        return true;
     }
 
     @Override
-    public void upload(String localFileFullName, String desiredDestinationFileName) throws IOException {
+    public boolean upload(String localFileFullName, String desiredDestinationFileName) {
         try {
             channelSftp.put(new FileInputStream(localFileFullName), desiredDestinationFileName);
-        } catch (FileNotFoundException e){
-            logger.error("File to be uploaded was not found");
-            throw new IOException(e.getMessage());
-        } catch (SftpException e){
-            logger.error("Error during uploading");
-            throw new IOException(e.getMessage());
+        } catch (FileNotFoundException e) {
+            logger.severe("File to be uploaded was not found");
+            return false;
+        } catch (SftpException e) {
+            logger.severe("Error during uploading");
+            return false;
         }
-
+        return true;
     }
 
     @Override
-    public void download(String fileName, String localFilePath) throws IOException {
+    public boolean download(String fileName, String localFilePath) {
         try {
             channelSftp.get(fileName);
         } catch (SftpException e) {
-            logger.error("Error during downloading");
-            throw new IOException(e.getMessage());
+            logger.severe("Error during downloading");
+            return false;
         }
+        return true;
     }
 
-    public void resumeDownload(String fileName, long skip) throws IOException{
+    public boolean resumeDownload(String fileName, long skip) throws IOException {
         try {
             channelSftp.get(fileName, null, skip);
         } catch (SftpException e) {
-            logger.error("Error during resuming download");
-            throw new IOException(e.getMessage());
+            logger.severe("Error during resuming download");
+            return false;
         }
+        return true;
     }
 
-
-
-    public void initializeConnection() throws IOException{
+    @Override
+    public boolean initializeConnection() {
         try {
             Properties hash = new Properties();
             hash.put(STRICT_HOST_KEY_CHECKING, "no");
@@ -186,46 +188,24 @@ public class SFTPConnector extends ClientModel {
             channelSftp = (ChannelSftp) channel;
             this.home = channelSftp.pwd();
             this.workingDirectory = home;
-        } catch (JSchException e){
-            logger.error("JSchException: " + e.getMessage());
-            throw new IOException(e.getMessage());
-        } catch (SftpException e){
-            logger.error("SftpException: " + e.getMessage());
-            throw new IOException(e.getMessage());
-        }
-    }
-
-    private static void printStringArray(String[] array){
-        for (String str : array) System.out.println(str);
-    }
-
-    private boolean fileExists(String fileName){
-        try {
-            String[] fileNames = ls();
-            for (String file : fileNames){
-                if (file.equals(fileName)){
-                    return true;
-                }
-            }
+        } catch (JSchException e) {
+            logger.severe("JSchException: " + e.getMessage());
             return false;
+        } catch (SftpException e) {
+            logger.severe("SftpException: " + e.getMessage());
+            return false;
+        }
+        return true;
+    }
 
-        } catch (IOException e){
 
+    private boolean fileExists(String fileName) {
+        Vector<String> fileNames = ls();
+        for (String file : fileNames) {
+            if (file.equals(fileName)) {
+                return true;
+            }
         }
         return false;
-    }
-
-    public static void main(String[] args){
-        SFTPConnector sftpConnector = new SFTPConnector("sftp.agilone.com", "jason.zhang", "Agil1234");
-        try {
-            sftpConnector.initializeConnection();
-            System.out.println("Connected");
-            sftpConnector.changeWorkingDirectory("dir1");
-            sftpConnector.upload("src/ClientModel.java", "ClientModel.java");
-            sftpConnector.changeWorkingDirectory("..");
-            printStringArray(sftpConnector.ls());
-        } catch (IOException e){
-            System.out.println("failed");
-        }
     }
 }

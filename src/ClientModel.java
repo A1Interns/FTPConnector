@@ -1,5 +1,3 @@
-import java.io.IOError;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Vector;
 import java.util.logging.Logger;
