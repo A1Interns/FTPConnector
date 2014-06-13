@@ -14,10 +14,6 @@ public abstract class ClientModel {
 
     abstract public boolean rename(String oldFileName, String newFileName);
 
-    abstract public Vector<String> ls();
-
-    abstract public Vector<String> ls(String path);
-
     abstract public Vector<String> ls(String path, boolean includeFiles, boolean includeDirectories);
 
     abstract public boolean mkdir(String directoryName);
