@@ -7,6 +7,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
+import java.util.Vector;
 
 
 /**
@@ -38,13 +39,14 @@ public class SFTPConnector extends ClientModel {
     }
 
     @Override
-    public void changeWorkingDirectory(String newDirectory){
+    public void changeWorkingDirectory(String newDirectory) throws IOException{
         workingDirectory = newDirectory;
         try {
             newDirectory = getAbsolutePath(newDirectory);
             channelSftp.cd(newDirectory);
         } catch (SftpException e){
-            e.printStackTrace();
+            logger.error("Error duing changing working directory from " + getAbsolutePath(workingDirectory) + " to " + newDirectory);
+            throw new IOException(e.getMessage());
         }
 
     }
@@ -55,49 +57,75 @@ public class SFTPConnector extends ClientModel {
         {
             return home + path.substring(2, path.length());
         }
-
         // Already absolute!
         return path;
     }
 
     @Override
-    public void rename(String oldFileName, String newFileName) {
+    public void rename(String oldFileName, String newFileName) throws IOException{
         try {
-            channelSftp.rename(oldFileName, getAbsolutePath(newFileName));
+            channelSftp.rename(oldFileName, newFileName);
         } catch (SftpException e) {
-            e.printStackTrace();
+            logger.error("Error during renaming file " + oldFileName + " to " + newFileName);
+            throw new IOException(e.getMessage());
         }
+    }
+
+    public String[] ls(String path) throws IOException{
+        return ls(path, true, true);
+    }
+
+    public String[] ls() throws IOException{
+        return ls(getAbsolutePath(workingDirectory), true, true);
     }
 
     @Override
     public String[] ls(String path, boolean includeFiles, boolean includeDirectories) throws IOException {
-        return null;
+        Vector<String> entriesNames = new Vector<String>();
+        try {
+            Vector<LsEntry> lsEntries = channelSftp.ls(path);
+            for (LsEntry entry : lsEntries){
+                if (!entry.getAttrs().isDir() && includeFiles){
+                    entriesNames.add(entry.getFilename());
+                }
+                else if (entry.getAttrs().isDir() && includeDirectories){
+                    entriesNames.add(entry.getFilename());
+                }
+            }
+        } catch (SftpException e){
+            logger.error("Error during listing directories in " + path);
+            throw new IOException(e.getMessage());
+        }
+        return entriesNames.toArray(new String[entriesNames.size()]);
     }
 
     @Override
-    public void mkdir(String directoryName) {
+    public void mkdir(String directoryName) throws IOException{
         try {
             channelSftp.mkdir(getAbsolutePath(directoryName));
         } catch (SftpException e){
-            e.printStackTrace();
+            logger.error("Error during creating directory" + directoryName);
+            throw new IOException(e.getMessage());
         }
     }
 
     @Override
-    public void rmdir(String directoryName) {
+    public void rmdir(String directoryName) throws IOException{
         try {
             channelSftp.rmdir(directoryName);
         } catch (SftpException e){
-            e.printStackTrace();
+            logger.error("Error during removing directory" + directoryName);
+            throw new IOException(e.getMessage());
         }
     }
 
     @Override
-    public void rm(String fileName) {
+    public void rm(String fileName) throws IOException{
         try {
             channelSftp.rm(fileName);
         } catch (SftpException e){
-            e.printStackTrace();
+            logger.error("Error during removing file " + fileName);
+            throw new IOException(e.getMessage());
         }
     }
 
@@ -112,40 +140,41 @@ public class SFTPConnector extends ClientModel {
     }
 
     @Override
-    public void upload(String localFileFullName, String desiredDestinationFileName)  {
+    public void upload(String localFileFullName, String desiredDestinationFileName) throws IOException {
         try {
             channelSftp.put(new FileInputStream(localFileFullName), desiredDestinationFileName);
         } catch (FileNotFoundException e){
             logger.error("File to be uploaded was not found");
-            e.printStackTrace();
+            throw new IOException(e.getMessage());
         } catch (SftpException e){
             logger.error("Error during uploading");
-            e.printStackTrace();
+            throw new IOException(e.getMessage());
         }
 
     }
 
     @Override
-    public void download(String fileName) {
+    public void download(String fileName) throws IOException {
         try {
             channelSftp.get(fileName);
         } catch (SftpException e) {
-            e.printStackTrace();
+            logger.error("Error during downloading");
+            throw new IOException(e.getMessage());
         }
     }
 
-    public void resumeDownload(String fileName, long skip){
+    public void resumeDownload(String fileName, long skip) throws IOException{
         try {
             channelSftp.get(fileName, null, skip);
         } catch (SftpException e) {
-            e.printStackTrace();
+            logger.error("Error during resuming download");
+            throw new IOException(e.getMessage());
         }
     }
 
 
 
-    public boolean initilizeConnection() {
-        boolean connected = false;
+    public void initializeConnection() throws IOException{
         try {
             Properties hash = new Properties();
             hash.put(STRICT_HOST_KEY_CHECKING, "no");
@@ -158,13 +187,12 @@ public class SFTPConnector extends ClientModel {
             channel.connect();
             channelSftp = (ChannelSftp) channel;
             this.home = channelSftp.pwd();
-            return true;
         } catch (JSchException e){
-            e.printStackTrace();
-            return false;
+            logger.error("JSchException: " + e.getMessage());
+            throw new IOException(e.getMessage());
         } catch (SftpException e){
-            e.printStackTrace();
-            return false;
+            logger.error("SftpException: " + e.getMessage());
+            throw new IOException(e.getMessage());
         }
     }
 }
