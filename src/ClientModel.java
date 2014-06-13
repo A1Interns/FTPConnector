@@ -12,6 +12,10 @@ public abstract class ClientModel {
 
     abstract public void rename(String oldFileName, String newFileName) throws IOException;
 
+    abstract public String[] ls() throws IOException;
+
+    abstract public String[] ls(String path) throws IOException;
+
     abstract public String[] ls(String path, boolean includeFiles, boolean includeDirectories) throws IOException;
 
     abstract public void mkdir(String directoryName) throws IOException;
@@ -20,13 +24,13 @@ public abstract class ClientModel {
 
     abstract public void rm(String fileName) throws IOException;
 
-    abstract public void disconnect() throws IOException;
+    abstract public void disconnect();
 
     abstract public void upload(String localFileFullName, String desiredDestinationFileName) throws IOException;
 
     abstract public void download(String fileName, String localFilePath) throws IOException;
 
-    abstract public boolean initilizeConnection() throws IOException;
+    abstract public void initializeConnection() throws IOException;
 
     public void setHost(String newHost) {
         hostname = newHost;

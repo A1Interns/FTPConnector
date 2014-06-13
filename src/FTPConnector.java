@@ -32,13 +32,13 @@ public class FTPConnector extends ClientModel {
         this.port = port;
         username = user;
         password = pwd;
-        isConnected = initilizeConnection();
+        initializeConnection();
         workingDirectory = "";
     }
 
 
     @Override
-    public boolean initilizeConnection() {
+    public void initializeConnection() {
         ftp.addProtocolCommandListener(new PrintCommandListener(new PrintWriter(System.out)));
         int reply;
         try {
