@@ -76,6 +76,8 @@ public abstract class ClientModel {
         return workingDirectory;
     }
 
+    public void setWorkingDirectory(String newDir) {workingDirectory = newDir;}
+
     public boolean[] uploadFiles(String[] files){
         boolean[] outcomes = new boolean[files.length];
         for (int i = 0; i < files.length; i++){
