@@ -9,7 +9,8 @@ import java.io.FileOutputStream;
 import java.io.PrintWriter;
 
 /**
- * Created by jasonzhang on 6/12/14.
+ * FTPS Class:
+ *  supports both explicit and implicit FTPS
  */
 
 import org.apache.commons.net.ftp.FTPSClient;
@@ -28,7 +29,7 @@ public class FTPSConnector extends ClientModel {
      * @param pwd password
      * @param bufferSize 0 standard
      */
-    public FTPSConnector(String host, String user, String pwd,long bufferSize){
+    public FTPSConnector(String host, int port, String user, String pwd,long bufferSize){
         setParams(host, port, user, pwd);
         isConnected = initilizeConnection();
         if(isConnected) {
@@ -75,7 +76,7 @@ public class FTPSConnector extends ClientModel {
 
     private void setParams(String host, int port, String user, String pwd){
         hostname = host;
-        port = port;
+        this.port = port;
         username = user;
         password = pwd;
     }

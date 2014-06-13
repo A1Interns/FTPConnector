@@ -19,10 +19,17 @@ public class FTPConnector extends ClientModel {
 
     private FTPClient ftp;
 
+    /**
+     *
+     * @param host hostname
+     * @param port port : standard is 21
+     * @param user username
+     * @param pwd password
+     */
     public FTPConnector(String host, int port, String user, String pwd){
         ftp = new FTPClient();
         hostname = host;
-        port = port;
+        this.port = port;
         username = user;
         password = pwd;
         isConnected = initilizeConnection();

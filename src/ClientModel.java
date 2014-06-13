@@ -36,7 +36,7 @@ public abstract class ClientModel {
         return home;
     }
 
-    public void setHome() {
+    public void setHome(String home) {
         this.home = home;
     }
 

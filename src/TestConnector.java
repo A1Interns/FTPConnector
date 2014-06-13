@@ -4,7 +4,10 @@
 public class TestConnector {
 
     public static void main(String[] args){
-        FTPConnector ftp = new FTPConnector("ftp.filegenie.com", 21, "jasonzhang", "4705-PTGL");
-        ftp.upload("/Users/bowenbaker/Desktop/README","README");
+        FTPSConnector ftps = new FTPSConnector("ftp.secureftp-test.com",990,"test","test",0);
+        try{ftps.ls("",true,true);}
+        catch(Exception e){
+            e.printStackTrace();
+        }
     }
 }
