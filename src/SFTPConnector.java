@@ -154,7 +154,7 @@ public class SFTPConnector extends ClientModel {
     }
 
     @Override
-    public void download(String fileName) throws IOException {
+    public void download(String fileName, String localFilePath) throws IOException {
         try {
             channelSftp.get(fileName);
         } catch (SftpException e) {

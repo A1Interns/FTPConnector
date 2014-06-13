@@ -50,10 +50,8 @@ public class FTPConnector extends ClientModel {
             ftp.login(username, password);
             ftp.setFileType(FTP.BINARY_FILE_TYPE); //TODO different file types?
             ftp.enterLocalPassiveMode();
-            return true;
         }
         catch(Exception e){
-            return false;
         }
     }
 
@@ -106,6 +104,16 @@ public class FTPConnector extends ClientModel {
     }
 
     @Override
+    public String[] ls() throws IOException {
+        return new String[0];
+    }
+
+    @Override
+    public String[] ls(String path) throws IOException {
+        return new String[0];
+    }
+
+    @Override
     public String[] ls(String path, boolean includeFiles, boolean includeDirectories) throws IOException {
         ArrayList<String> list = new ArrayList<String>();
         if(includeFiles)
@@ -131,4 +139,6 @@ public class FTPConnector extends ClientModel {
     public void rm(String fileName) throws IOException {
         ftp.deleteFile(workingDirectory + fileName);
     }
+
+
 }

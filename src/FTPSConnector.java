@@ -21,7 +21,6 @@ public class FTPSConnector extends ClientModel {
 
     private FTPSClient ftps;
 
-
     /**
      * This constructor is for implicit FTPS and you don't have to specify a protocol.
      * @param host hostname
@@ -30,8 +29,13 @@ public class FTPSConnector extends ClientModel {
      * @param bufferSize 0 standard
      */
     public FTPSConnector(String host, int port, String user, String pwd,long bufferSize){
+        ftps = new FTPSClient();
         setParams(host, port, user, pwd);
-        isConnected = initilizeConnection();
+        try{initializeConnection();}
+        catch(IOException e){
+            System.out.println("Unable to initialize");
+            e.printStackTrace();
+        }
         if(isConnected) {
             try {
                 ftps.execPBSZ(bufferSize);
@@ -60,7 +64,10 @@ public class FTPSConnector extends ClientModel {
     public FTPSConnector(String host, int port, String user, String pwd, long bufferSize, String prot, String protocol){
         setParams(host, port, user, pwd);
         ftps = new FTPSClient(protocol);
-        isConnected = initilizeConnection();
+        try{initializeConnection();}
+        catch(IOException e){
+            System.out.println("Unable to initialize");
+        }
         if(isConnected) {
             try {
                 ftps.execAUTH(protocol);
@@ -119,6 +126,7 @@ public class FTPSConnector extends ClientModel {
             try {
                 this.ftps.logout();
                 this.ftps.disconnect();
+                isConnected = false;
             } catch (IOException f) {
                 System.out.println("Failed to disconnect");
                 f.printStackTrace();
@@ -148,23 +156,20 @@ public class FTPSConnector extends ClientModel {
     }
 
     @Override
-    public boolean initilizeConnection() {
+    public void initializeConnection() throws IOException{
         ftps.addProtocolCommandListener(new PrintCommandListener(new PrintWriter(System.out)));
         int reply;
-        try {
-            ftps.connect(hostname, port);
-            reply = ftps.getReplyCode();
-            if (!FTPReply.isPositiveCompletion(reply)) {
-                ftps.disconnect();
-            }
-            ftps.login(username, password);
-            ftps.setFileType(FTP.BINARY_FILE_TYPE); //TODO different file types?
-            ftps.enterLocalPassiveMode();
-            return true;
+        ftps.connect(hostname, port);
+        reply = ftps.getReplyCode();
+        if (!FTPReply.isPositiveCompletion(reply)) {
+            ftps.disconnect();
+            return;
         }
-        catch(Exception e){
-            return false;
-        }
+        isConnected = true;
+        ftps.addProtocolCommandListener(new PrintCommandListener(new PrintWriter(System.out)));
+        ftps.login(username, password);
+        ftps.setFileType(FTP.BINARY_FILE_TYPE); //TODO different file types?
+        ftps.enterLocalPassiveMode();
     }
 
 
@@ -176,5 +181,15 @@ public class FTPSConnector extends ClientModel {
     public void changeWorkingDirectory(String newDirectory) {
         workingDirectory = newDirectory;
 
+    }
+
+    @Override
+    public String[] ls(String path) throws IOException {
+        return new String[0];
+    }
+
+    @Override
+    public String[] ls() throws IOException {
+        return new String[0];
     }
 }
