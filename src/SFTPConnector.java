@@ -1,12 +1,7 @@
-import com.jcraft.jsch.Channel;
-import com.jcraft.jsch.ChannelSftp;
+import com.jcraft.jsch.*;
 import com.jcraft.jsch.ChannelSftp.LsEntry;
-import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.Session;
-import com.jcraft.jsch.SftpATTRS;
-import com.jcraft.jsch.SftpException;
-import com.jcraft.jsch.SftpProgressMonitor;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -24,6 +19,7 @@ public class SFTPConnector extends ClientModel {
     private JSch jsch;
     private ChannelSftp channelSftp;
     private Session session;
+    private Log logger = LogFactory.getLog(getClass());
 
     public SFTPConnector(String hostname, String user, String pwd){
         this(hostname, 22, user, pwd);
@@ -65,6 +61,47 @@ public class SFTPConnector extends ClientModel {
     }
 
     @Override
+    public void rename(String oldFileName, String newFileName) {
+        try {
+            channelSftp.rename(oldFileName, getAbsolutePath(newFileName));
+        } catch (SftpException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public String[] ls(String path, boolean includeFiles, boolean includeDirectories) throws IOException {
+        return null;
+    }
+
+    @Override
+    public void mkdir(String directoryName) {
+        try {
+            channelSftp.mkdir(getAbsolutePath(directoryName));
+        } catch (SftpException e){
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void rmdir(String directoryName) {
+        try {
+            channelSftp.rmdir(directoryName);
+        } catch (SftpException e){
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void rm(String fileName) {
+        try {
+            channelSftp.rm(fileName);
+        } catch (SftpException e){
+            e.printStackTrace();
+        }
+    }
+
+    @Override
     public void disconnect() {
         if (channelSftp != null) {
             channelSftp.disconnect();
@@ -79,8 +116,10 @@ public class SFTPConnector extends ClientModel {
         try {
             channelSftp.put(new FileInputStream(localFileFullName), desiredDestinationFileName);
         } catch (FileNotFoundException e){
+            logger.error("File to be uploaded was not found");
             e.printStackTrace();
         } catch (SftpException e){
+            logger.error("Error during uploading");
             e.printStackTrace();
         }
 

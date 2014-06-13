@@ -13,17 +13,30 @@ import java.io.PrintWriter;
 /**
  * Created by jasonzhang on 6/12/14.
  */
-public class FTPS extends ClientModel {
+
+import org.apache.commons.net.ftp.FTPSClient;
+
+
+public class FTPSConnector extends ClientModel {
+
+    private FTPSClient ftpsClient;
+
+    public FTPSConnector(String hostname, String username, String pwd){
+        this.hostname = hostname;
+        this.username = username;
+        this.password = pwd;
+    }
+
 
     private FTPSClient ftps;
 
-    public FTPS(String host, int port, String user, String pwd, String protocol){
+    public FTPSConnector(String host, int port, String user, String pwd, String protocol){
         setParams(host, port, user, pwd);
         ftps = new FTPSClient(protocol);
         isConnected = initilizeConnection();
     }
 
-    public FTPS(String host, int port, String user, String pwd){
+    public FTPSConnector(String host, int port, String user, String pwd){
         setParams(host, port, user, pwd);
         ftps = new FTPSClient();
         isConnected = initilizeConnection();
@@ -34,6 +47,31 @@ public class FTPS extends ClientModel {
         port = port;
         username = user;
         password = pwd;
+    }
+
+    @Override
+    public void rename(String oldFileName, String newFileName) throws IOException {
+
+    }
+
+    @Override
+    public String[] ls(String path, boolean includeFiles, boolean includeDirectories) throws IOException {
+        return new String[0];
+    }
+
+    @Override
+    public void mkdir(String directoryName) throws IOException {
+
+    }
+
+    @Override
+    public void rmdir(String directoryName) throws IOException {
+
+    }
+
+    @Override
+    public void rm(String fileName) throws IOException {
+
     }
 
     @Override

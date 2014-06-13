@@ -10,33 +10,64 @@ public abstract class ClientModel {
     protected String hostname, username, password, workingDirectory, home;
     protected int port;
 
-    abstract public void disconnect();
+    abstract public void rename(String oldFileName, String newFileName) throws IOException;
 
-    abstract public void upload(String localFileFullName, String desiredDestinationFileName);
+    abstract public String[] ls(String path, boolean includeFiles, boolean includeDirectories) throws IOException;
 
-    abstract public void download(String fileName);
+    abstract public void mkdir(String directoryName) throws IOException;
 
-    abstract public boolean initilizeConnection();
+    abstract public void rmdir(String directoryName) throws IOException;
 
-    public void setHost(String newHost){hostname = newHost;}
+    abstract public void rm(String fileName) throws IOException;
 
-    public String getHome() {return home;}
+    abstract public void disconnect() throws IOException;
 
-    public void setHome() {this.home = home;}
+    abstract public void upload(String localFileFullName, String desiredDestinationFileName) throws IOException;
 
-    public String getHost() {return hostname;}
+    abstract public void download(String fileName) throws IOException;
 
-    public void setPort(int newPort){port = newPort;}
+    abstract public boolean initilizeConnection() throws IOException;
 
-    public int getPort(){return port;}
+    public void setHost(String newHost) {
+        hostname = newHost;
+    }
 
-    public void setUserName(String newName){username = newName;}
+    public String getHome() {
+        return home;
+    }
 
-    public String getUserName(){return username;}
+    public void setHome() {
+        this.home = home;
+    }
 
-    public void setPassWord(String newPassWord){password = newPassWord;}
+    public String getHost() {
+        return hostname;
+    }
 
-    public abstract void changeWorkingDirectory(String newDirectory);
-    public String getWorkingDirectory(){return workingDirectory;}
+    public void setPort(int newPort) {
+        port = newPort;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setUserName(String newName) {
+        username = newName;
+    }
+
+    public String getUserName() {
+        return username;
+    }
+
+    public void setPassWord(String newPassWord) {
+        password = newPassWord;
+    }
+
+    public abstract void changeWorkingDirectory(String newDirectory) throws IOException;
+
+    public String getWorkingDirectory() {
+        return workingDirectory;
+    }
 
 }
