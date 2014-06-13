@@ -65,16 +65,6 @@ public class SFTPConnector extends ClientModel {
     }
 
     @Override
-    public Vector<String> ls(String path) {
-        return ls(path, true, true);
-    }
-
-    @Override
-    public Vector<String> ls() {
-        return ls(".", true, true);
-    }
-
-    @Override
     public Vector<String> ls(String path, boolean includeFiles, boolean includeDirectories) {
         Vector<String> entriesNames = new Vector<String>();
         try {
@@ -200,7 +190,7 @@ public class SFTPConnector extends ClientModel {
 
 
     private boolean fileExists(String fileName) {
-        Vector<String> fileNames = ls();
+        Vector<String> fileNames = ls(".", true, true);
         for (String file : fileNames) {
             if (file.equals(fileName)) {
                 return true;
