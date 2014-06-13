@@ -1,10 +1,13 @@
+import java.io.IOError;
+import java.io.IOException;
+
 /**
  * Created by bowenbaker on 6/12/14.
  */
 public abstract class ClientModel {
 
     protected boolean isConnected = false;
-    protected String hostname, username, password, workingDirectory;
+    protected String hostname, username, password, workingDirectory, home;
     protected int port;
 
     abstract public void disconnect();
@@ -16,6 +19,10 @@ public abstract class ClientModel {
     abstract public boolean initilizeConnection();
 
     public void setHost(String newHost){hostname = newHost;}
+
+    public String getHome() {return home;}
+
+    public void setHome() {this.home = home;}
 
     public String getHost() {return hostname;}
 
