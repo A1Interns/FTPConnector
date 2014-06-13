@@ -1,7 +1,20 @@
 /**
  * Created by jasonzhang on 6/12/14.
  */
-public class FTPS extends ClientModel {
+
+import org.apache.commons.net.ftp.FTPSClient;
+
+
+public class FTPSConnector extends ClientModel {
+
+    private FTPSClient ftpsClient;
+
+    public FTPSConnector(String hostname, String username, String pwd){
+        this.hostname = hostname;
+        this.username = username;
+        this.password = pwd;
+    }
+
 
     @Override
     public void disconnect() {
@@ -20,6 +33,7 @@ public class FTPS extends ClientModel {
 
     @Override
     public boolean initilizeConnection() {
+
         return false;
     }
 
