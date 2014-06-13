@@ -20,7 +20,6 @@ public class SFTPConnector extends ClientModel {
     private JSch jsch;
     private ChannelSftp channelSftp;
     private Session session;
-    private Log logger = LogFactory.getLog(getClass());
 
     public SFTPConnector(String hostname, String user, String pwd){
         this(hostname, 2222, user, pwd);

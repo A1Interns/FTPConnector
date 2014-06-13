@@ -9,7 +9,7 @@ import java.util.logging.Logger;
  */
 public abstract class ClientModel {
 
-    private final static Logger LOGGER = Logger.getLogger(ClientModel.class.getName());
+    private final static Logger logger = Logger.getLogger(ClientModel.class.getName());
     protected boolean isConnected = false;
     protected String hostname, username, password, workingDirectory, home;
     protected int port;
