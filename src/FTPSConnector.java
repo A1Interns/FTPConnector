@@ -20,6 +20,10 @@ import java.util.ArrayList;
 public class FTPSConnector extends ClientModel {
 
     private FTPSClient ftps;
+    private String prot = "P";
+    private String protocol = "SSL";
+    private long bufSize = 0;
+    private boolean isExplicit;
 
     /**
      * This constructor is for implicit FTPS and you don't have to specify a protocol.
@@ -29,6 +33,7 @@ public class FTPSConnector extends ClientModel {
      * @param bufferSize 0 standard
      */
     public FTPSConnector(String host, int port, String user, String pwd,long bufferSize){
+        isExplicit = false;
         ftps = new FTPSClient();
         setParams(host, port, user, pwd);
         try{initializeConnection();}
@@ -62,22 +67,15 @@ public class FTPSConnector extends ClientModel {
      *             "P" : Private
      */
     public FTPSConnector(String host, int port, String user, String pwd, long bufferSize, String prot, String protocol){
+        isExplicit = true;
         setParams(host, port, user, pwd);
         ftps = new FTPSClient(protocol);
+        this.prot = prot;
+        this.protocol = protocol;
+        this.bufSize = bufferSize;
         try{initializeConnection();}
         catch(IOException e){
             System.out.println("Unable to initialize");
-        }
-        if(isConnected) {
-            try {
-                ftps.execAUTH(protocol);
-                ftps.execPBSZ(bufferSize);
-                ftps.execPROT(prot);
-
-            }
-            catch(Exception e){
-                System.out.println("Failed to initilize FTPES parameters");
-            }
         }
     }
 
@@ -102,7 +100,7 @@ public class FTPSConnector extends ClientModel {
         if(includeDirectories)
             for(FTPFile dir : ftps.listDirectories())
                 list.add(dir.getName());
-        return (String[]) list.toArray();
+        return list.toArray(new String[list.size()]);
     }
 
     @Override
@@ -159,8 +157,20 @@ public class FTPSConnector extends ClientModel {
     public void initializeConnection() throws IOException{
         ftps.addProtocolCommandListener(new PrintCommandListener(new PrintWriter(System.out)));
         int reply;
-        ftps.connect(hostname, port);
+        System.out.println("added prot listener");
+        try{
+            ftps.connect(hostname, port);
+        }catch(Exception e){}
+        System.out.println("connected");
+        ftps.login(username,password);
+        System.out.println("logged in");
+        if(isExplicit) {
+            ftps.execAUTH(protocol);
+            ftps.execPBSZ(bufSize);
+            ftps.execPROT(prot);
+        } else ftps.execPBSZ(bufSize);
         reply = ftps.getReplyCode();
+        System.out.println("reply is : " + reply);
         if (!FTPReply.isPositiveCompletion(reply)) {
             ftps.disconnect();
             return;
