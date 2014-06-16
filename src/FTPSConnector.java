@@ -8,17 +8,13 @@ import java.io.InputStream;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
 
+import org.apache.commons.net.ftp.FTPSClient;
+import java.util.Vector;
+
 /**
  * FTPS Class:
  *  supports both explicit and implicit FTPS
  */
-
-import org.apache.commons.net.ftp.FTPSClient;
-import java.util.ArrayList;
-import java.util.logging.Logger;
-import java.util.Vector;
-
-
 public class FTPSConnector extends ClientModel {
 
    // Logger logger = Logger.getLogger();
@@ -42,15 +38,14 @@ public class FTPSConnector extends ClientModel {
         setParams(host, port, user, pwd);
         try{isConnected = initializeConnection();}
         catch(Exception e){
-            System.out.println("Unable to initialize");
-            e.printStackTrace();
+            logger.severe("Unable to initialize implicit FTPS. Host : " + host + ", port : " + port + ", user : " + user);
         }
         if(isConnected) {
             try {
                 ftps.execPBSZ(bufferSize);
             }
             catch(Exception e){
-                System.out.println("Failed to initilize FTPES parameters");
+                logger.severe("Failed to initilize FTPES parameters");
             }
         }
     }
@@ -79,7 +74,7 @@ public class FTPSConnector extends ClientModel {
         this.bufSize = bufferSize;
         try{initializeConnection();}
         catch(Exception e){
-            System.out.println("Unable to initialize");
+            logger.severe("Unable to initialize explicit FTPS. Host : " + host + ", port : " + port + ", user : " + user);
         }
     }
 
@@ -96,7 +91,7 @@ public class FTPSConnector extends ClientModel {
             ftps.rename(oldFileName, newFileName);
             return true;
         } catch(Exception e){
-            //TODO Logger
+            logger.severe("Failed to rename : " + oldFileName + " to " + newFileName);
             return false;
         }
 
@@ -113,7 +108,7 @@ public class FTPSConnector extends ClientModel {
                 for (FTPFile dir : ftps.listDirectories())
                     list.add(dir.getName());
         } catch(Exception e){
-            //TODO Logger
+            logger.severe("Invalid ls path : " + path);
         }
         return list;
     }
@@ -124,7 +119,7 @@ public class FTPSConnector extends ClientModel {
             ftps.makeDirectory(workingDirectory + directoryName);
             return true;
         }catch(Exception e){
-            //TODO Logger
+            logger.severe("failed to make directory with name : " + directoryName);
             return false;
         }
     }
@@ -135,7 +130,7 @@ public class FTPSConnector extends ClientModel {
             ftps.removeDirectory(workingDirectory + directoryName);
             return true;
         }catch(Exception e){
-            //TODO Logger
+            logger.severe("failed to remove directory with name : " + workingDirectory + directoryName);
             return false;
         }
     }
@@ -146,7 +141,7 @@ public class FTPSConnector extends ClientModel {
             ftps.deleteFile(workingDirectory + fileName);
             return false;
         }catch(Exception e){
-            //TODO Logger
+            logger.severe("failed to remove file with name : " + workingDirectory + fileName);
             return false;
         }
     }
@@ -160,7 +155,7 @@ public class FTPSConnector extends ClientModel {
                 isConnected = false;
                 return true;
             } catch (IOException f) {
-                //TODO Logger
+                logger.severe("failed to disconnect");
                 return false;
             }
         }
@@ -175,7 +170,7 @@ public class FTPSConnector extends ClientModel {
             return true;
         }
         catch(Exception e){
-            //TODO Logger
+            logger.severe("failed to upload file : " + localFileFullName + " to folder : " + workingDirectory + desiredDestinationFileName);
             return false;
         }
     }
@@ -187,7 +182,7 @@ public class FTPSConnector extends ClientModel {
             this.ftps.retrieveFile(workingDirectory + fileName, fos);
             return true;
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.severe("failed to download : " + workingDirectory + fileName + " to : " + localFilePath);
             return false;
         }
     }
@@ -199,7 +194,7 @@ public class FTPSConnector extends ClientModel {
         try{
             ftps.connect(hostname, port);
         }catch(Exception e){
-            //TODO Logger
+            logger.severe("failed to obtain socket connection at host : " + hostname +  ", port : " + port);
         }
 
         try {
@@ -212,6 +207,7 @@ public class FTPSConnector extends ClientModel {
             reply = ftps.getReplyCode();
             System.out.println("reply is : " + reply);
             if (!FTPReply.isPositiveCompletion(reply)) {
+                logger.severe("received negative reply from server");
                 ftps.disconnect();
                 return false;
             }
@@ -221,7 +217,6 @@ public class FTPSConnector extends ClientModel {
             ftps.enterLocalPassiveMode();
             return true;
         } catch(Exception e){
-            //TODO Logger
             return false;
         }
     }

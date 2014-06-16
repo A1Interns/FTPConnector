@@ -4,7 +4,7 @@
 public class TestConnector {
 
     public static void main(String[] args){
-        FTPSConnector ftps = new FTPSConnector("localhost",21,"bowenbaker","piggy1",100000,"P","SSL");
+        FTPSConnector ftps = new FTPSConnector("localhost",21,"bowenbaker","XXXXXX",100000,"P","SSL");
         System.out.println("trying ls");
         try{
             for(String file : ftps.ls("",true,true)) System.out.println(file);
