@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Vector;
 
 /**
  * Created by bowenbaker on 6/12/14.
@@ -38,7 +39,7 @@ public class FTPConnector extends ClientModel {
 
 
     @Override
-    public void initializeConnection() {
+    public boolean initializeConnection() {
         ftp.addProtocolCommandListener(new PrintCommandListener(new PrintWriter(System.out)));
         int reply;
         try {
@@ -50,8 +51,10 @@ public class FTPConnector extends ClientModel {
             ftp.login(username, password);
             ftp.setFileType(FTP.BINARY_FILE_TYPE); //TODO different file types?
             ftp.enterLocalPassiveMode();
+            return true;
         }
         catch(Exception e){
+            return false;
         }
     }
 
@@ -60,84 +63,109 @@ public class FTPConnector extends ClientModel {
      * @param newDirectory must end in "/"
      */
     @Override
-    public void changeWorkingDirectory(String newDirectory) {
+    public boolean cd(String newDirectory) {
         workingDirectory = newDirectory;
+        return true;
     }
 
     @Override
-    public void disconnect() {
+    public boolean disconnect() {
         if (this.ftp.isConnected()) {
             try {
                 this.ftp.logout();
                 this.ftp.disconnect();
+                return true;
             } catch (IOException f) {
-                System.out.println("Failed to disconnect");
-                f.printStackTrace();
+                //TODO Logger
+                return false;
             }
         }
+        return true;
     }
 
     @Override
-    public void upload(String localFileFullName, String desiredDestinationFileName) {
+    public boolean upload(String localFileFullName, String desiredDestinationFileName) {
         try{
             InputStream input = new FileInputStream(new File(localFileFullName));
             this.ftp.storeFile(workingDirectory + desiredDestinationFileName, input);
+            return true;
         }
         catch(Exception e){
-            e.printStackTrace();
+            //TODO Logger
+            return false;
         }
     }
 
     @Override
-    public void download(String fileName, String localFilePath) {
+    public boolean download(String fileName, String localFilePath) {
         try {
             FileOutputStream fos = new FileOutputStream(localFilePath);
             this.ftp.retrieveFile(workingDirectory + fileName, fos);
+            return true;
         } catch (IOException e) {
-            e.printStackTrace();
+            //TODO Logger
+            return false;
         }
     }
 
     @Override
-    public void rename(String oldFileName, String newFileName) throws IOException {
-        ftp.rename(oldFileName, newFileName);
+    public boolean rename(String oldFileName, String newFileName){
+        try {
+            ftp.rename(oldFileName, newFileName);
+            return true;
+        } catch(Exception e){
+            //TODO Logger
+            return false;
+        }
     }
 
     @Override
-    public String[] ls() throws IOException {
-        return new String[0];
+    public Vector<String> ls(String path, boolean includeFiles, boolean includeDirectories){
+        Vector<String> list = new Vector<String>();
+        try {
+            if (includeFiles)
+                for (FTPFile file : ftp.listFiles())
+                    list.add(file.getName());
+            if (includeDirectories)
+                for (FTPFile dir : ftp.listDirectories())
+                    list.add(dir.getName());
+        } catch(Exception e){
+            //TODO Logger
+        }
+        return list;
     }
 
     @Override
-    public String[] ls(String path) throws IOException {
-        return new String[0];
+    public boolean mkdir(String directoryName){
+        try {
+            ftp.makeDirectory(workingDirectory + directoryName);
+            return true;
+        } catch(Exception e){
+            //TODO Logger
+            return false;
+        }
     }
 
     @Override
-    public String[] ls(String path, boolean includeFiles, boolean includeDirectories) throws IOException {
-        ArrayList<String> list = new ArrayList<String>();
-        if(includeFiles)
-            for(FTPFile file : ftp.listFiles())
-                list.add(file.getName());
-        if(includeDirectories)
-            for(FTPFile dir : ftp.listDirectories())
-                list.add(dir.getName());
-        return (String[]) list.toArray();
+    public boolean rmdir(String directoryName){
+        try {
+            ftp.removeDirectory(workingDirectory + directoryName);
+            return true;
+        } catch(Exception e){
+            //TODO Logger
+            return false;
+        }
     }
 
     @Override
-    public void mkdir(String directoryName) throws IOException {
-        ftp.makeDirectory(workingDirectory + directoryName);
-    }
-
-    @Override
-    public void rmdir(String directoryName) throws IOException {
-        ftp.removeDirectory(workingDirectory + directoryName);
-    }
-
-    @Override
-    public void rm(String fileName) throws IOException {
-        ftp.deleteFile(workingDirectory + fileName);
+    public boolean rm(String fileName){
+        try {
+            ftp.deleteFile(workingDirectory + fileName);
+            return true;
+        } catch(Exception e){
+            //TODO Logger
+            return false;
+        }
     }
 
 

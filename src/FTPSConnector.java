@@ -16,11 +16,12 @@ import java.io.PrintWriter;
 import org.apache.commons.net.ftp.FTPSClient;
 import java.util.ArrayList;
 import java.util.logging.Logger;
+import java.util.Vector;
 
 
 public class FTPSConnector extends ClientModel {
 
-    Logger logger = Logger.getLogger()
+   // Logger logger = Logger.getLogger();
 
     private FTPSClient ftps;
     private String prot = "P";
@@ -39,8 +40,8 @@ public class FTPSConnector extends ClientModel {
         isExplicit = false;
         ftps = new FTPSClient();
         setParams(host, port, user, pwd);
-        try{initializeConnection();}
-        catch(IOException e){
+        try{isConnected = initializeConnection();}
+        catch(Exception e){
             System.out.println("Unable to initialize");
             e.printStackTrace();
         }
@@ -77,7 +78,7 @@ public class FTPSConnector extends ClientModel {
         this.protocol = protocol;
         this.bufSize = bufferSize;
         try{initializeConnection();}
-        catch(IOException e){
+        catch(Exception e){
             System.out.println("Unable to initialize");
         }
     }
@@ -90,122 +91,144 @@ public class FTPSConnector extends ClientModel {
     }
 
     @Override
-    public void rename(String oldFileName, String newFileName) throws IOException {
-        ftps.rename(oldFileName,newFileName);
+    public boolean rename(String oldFileName, String newFileName){
+        try {
+            ftps.rename(oldFileName, newFileName);
+            return true;
+        } catch(Exception e){
+            //TODO Logger
+            return false;
+        }
+
     }
 
     @Override
-    public String[] ls(String path, boolean includeFiles, boolean includeDirectories) throws IOException {
-        ArrayList<String> list = new ArrayList<String>();
-        if(includeFiles)
-            for(FTPFile file : ftps.listFiles())
-                list.add(file.getName());
-        if(includeDirectories)
-            for(FTPFile dir : ftps.listDirectories())
-                list.add(dir.getName());
-        return list.toArray(new String[list.size()]);
+    public Vector<String> ls(String path, boolean includeFiles, boolean includeDirectories){
+        Vector<String> list = new Vector<String>();
+        try {
+            if (includeFiles)
+                for (FTPFile file : ftps.listFiles())
+                    list.add(file.getName());
+            if (includeDirectories)
+                for (FTPFile dir : ftps.listDirectories())
+                    list.add(dir.getName());
+        } catch(Exception e){
+            //TODO Logger
+        }
+        return list;
     }
 
     @Override
-    public void mkdir(String directoryName) throws IOException {
-        ftps.makeDirectory(workingDirectory + directoryName);
+    public boolean mkdir(String directoryName){
+        try {
+            ftps.makeDirectory(workingDirectory + directoryName);
+            return true;
+        }catch(Exception e){
+            //TODO Logger
+            return false;
+        }
     }
 
     @Override
-    public void rmdir(String directoryName) throws IOException {
-        ftps.removeDirectory(workingDirectory + directoryName);
+    public boolean rmdir(String directoryName){
+        try {
+            ftps.removeDirectory(workingDirectory + directoryName);
+            return true;
+        }catch(Exception e){
+            //TODO Logger
+            return false;
+        }
     }
 
     @Override
-    public void rm(String fileName) throws IOException {
-        ftps.deleteFile(workingDirectory + fileName);
+    public boolean rm(String fileName){
+        try {
+            ftps.deleteFile(workingDirectory + fileName);
+            return false;
+        }catch(Exception e){
+            //TODO Logger
+            return false;
+        }
     }
 
     @Override
-    public void disconnect() {
+    public boolean disconnect() {
         if (this.ftps.isConnected()) {
             try {
                 this.ftps.logout();
                 this.ftps.disconnect();
                 isConnected = false;
+                return true;
             } catch (IOException f) {
-                System.out.println("Failed to disconnect");
-                f.printStackTrace();
+                //TODO Logger
+                return false;
             }
         }
+        return true;
     }
 
     @Override
-    public void upload(String localFileFullName, String desiredDestinationFileName) {
-        boolean retVal = false;
+    public boolean upload(String localFileFullName, String desiredDestinationFileName) {
         try{
             InputStream input = new FileInputStream(new File(localFileFullName));
-            retVal = this.ftps.storeFile(workingDirectory + desiredDestinationFileName, input);
+            this.ftps.storeFile(workingDirectory + desiredDestinationFileName, input);
+            return true;
         }
         catch(Exception e){
-            e.printStackTrace();
+            //TODO Logger
+            return false;
         }
-
-        return retVal;
     }
 
     @Override
-    public void download(String fileName, String localFilePath) {
+    public boolean download(String fileName, String localFilePath) {
         try {
             FileOutputStream fos = new FileOutputStream(localFilePath);
             this.ftps.retrieveFile(workingDirectory + fileName, fos);
+            return true;
         } catch (IOException e) {
             e.printStackTrace();
+            return false;
         }
     }
 
     @Override
-    public void initializeConnection() throws IOException{
+    public boolean initializeConnection(){
         ftps.addProtocolCommandListener(new PrintCommandListener(new PrintWriter(System.out)));
         int reply;
-        System.out.println("added prot listener");
         try{
             ftps.connect(hostname, port);
-        }catch(Exception e){}
-        System.out.println("connected");
-        ftps.login(username,password);
-        System.out.println("logged in");
-        if(isExplicit) {
-            ftps.execAUTH(protocol);
-            ftps.execPBSZ(bufSize);
-            ftps.execPROT(prot);
-        } else ftps.execPBSZ(bufSize);
-        reply = ftps.getReplyCode();
-        System.out.println("reply is : " + reply);
-        if (!FTPReply.isPositiveCompletion(reply)) {
-            ftps.disconnect();
-            return;
+        }catch(Exception e){
+            //TODO Logger
         }
-        isConnected = true;
-        ftps.addProtocolCommandListener(new PrintCommandListener(new PrintWriter(System.out)));
-        ftps.login(username, password);
-        ftps.setFileType(FTP.BINARY_FILE_TYPE); //TODO different file types?
-        ftps.enterLocalPassiveMode();
+
+        try {
+            ftps.login(username, password);
+            if (isExplicit) {
+                ftps.execAUTH(protocol);
+                ftps.execPBSZ(bufSize);
+                ftps.execPROT(prot);
+            } else ftps.execPBSZ(bufSize);
+            reply = ftps.getReplyCode();
+            System.out.println("reply is : " + reply);
+            if (!FTPReply.isPositiveCompletion(reply)) {
+                ftps.disconnect();
+                return false;
+            }
+            ftps.addProtocolCommandListener(new PrintCommandListener(new PrintWriter(System.out)));
+            ftps.login(username, password);
+            ftps.setFileType(FTP.BINARY_FILE_TYPE); //TODO different file types?
+            ftps.enterLocalPassiveMode();
+            return true;
+        } catch(Exception e){
+            //TODO Logger
+            return false;
+        }
     }
 
-
-    /**
-     * Change directory inside FTP Server
-     * @param newDirectory must end in "/"
-     */
     @Override
-    public void changeWorkingDirectory(String newDirectory) {
+    public boolean cd(String newDirectory){
         workingDirectory = newDirectory;
-
-    }
-
-    @Override
-    public String[] ls(String path) throws IOException {
-        return new String[0];
-    }
-
-    @Override
-    public String[] ls() throws IOException {
-        return new String[0];
+        return true;
     }
 }
