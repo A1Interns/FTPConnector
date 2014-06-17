@@ -12,6 +12,9 @@ import org.junit.Test;
 import java.io.*;
 
 /**
+ * NOTE ::: not complete, part way through mocking all of the apache FTPClient methods
+ * used in the FTPConnector.
+ *
  * Created by bowenbaker on 6/16/14.
  */
 public class UnitTests {

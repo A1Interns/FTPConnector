@@ -12,7 +12,7 @@ import java.io.PrintWriter;
 
 
 /**
- * A client that connects to FTP, FTPS, and SFPT
+ * NOTE ::: This was just for a quick test, has no relevance for the actual Connector.
  * Created by bowenbaker on 6/12/14.
  */
 public class Client {
